@@ -1,11 +1,13 @@
-# Use a base image with OpenJDK
-FROM openjdk:21-jdk-slim
+FROM maven:3.8.4-openjdk-21 AS build
 
-# Set the working directory inside the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the jar file from the host to the container
-COPY target/*.jar app.jar
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Specify the command to run the jar file
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run Maven to compile the Java code
+RUN mvn clean package
+
+# Specify the command to run your application
+CMD ["java", "-jar", "target/*.jar"]
